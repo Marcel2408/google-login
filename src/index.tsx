@@ -27,9 +27,7 @@ import './theme/variables.css';
 
 const { SplashScreen } = Plugins;
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <App />,
   document.getElementById('root')
 );
 SplashScreen.hide();
