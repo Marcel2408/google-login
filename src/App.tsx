@@ -13,26 +13,32 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
 
   const initializeGoogleLogin = ():void => {
-    gapi.load('auth2', async () => {
-      try {
-        const GoogleAuth = gapi.auth2.init({
-          client_id: '197841512077-1k0vf32shtk67b956tqta28dtv4t2bh1.apps.googleusercontent.com'
-        });
-        const googleUser:gapi.auth2.GoogleUser = await GoogleAuth.signIn();
-        setUser({
-          givenName: googleUser.getBasicProfile().getGivenName(),
-          fullName: googleUser.getBasicProfile().getName(),
-          profilePic: googleUser.getBasicProfile().getImageUrl(),
-          email: googleUser.getBasicProfile().getEmail(),
-        })
-        setIsLoggedIn(GoogleAuth.isSignedIn.get())
+    gapi.load('auth2', () => {
 
-      } catch (error) {
-        console.log('error --> ', error);
-        throw new Error('failed to authorize user')
-      }
+        gapi.auth2.init({
+          client_id: '197841512077-1k0vf32shtk67b956tqta28dtv4t2bh1.apps.googleusercontent.com'
+        })
+        .then((auth2) => {
+          const GoogleAuth: gapi.auth2.GoogleAuth = gapi.auth2.getAuthInstance();
+          GoogleAuth.signIn()
+          .then((googleUser) => {
+            setUser({
+              givenName: googleUser.getBasicProfile().getGivenName(),
+              fullName: googleUser.getBasicProfile().getName(),
+              profilePic: googleUser.getBasicProfile().getImageUrl(),
+              email: googleUser.getBasicProfile().getEmail(),
+            })
+            setIsLoggedIn(GoogleAuth.isSignedIn.get())
+          });
+        })
+        .catch((error: any) => {
+          console.log('error --> ', error);
+          throw new Error('failed to authorize user')
+        });
+
     });
   }
+
 
   const userSignOut = async () => {
     const GoogleAuth: gapi.auth2.GoogleAuth = gapi.auth2.getAuthInstance();
